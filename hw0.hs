@@ -1,3 +1,6 @@
+--Charles Voege
+--14098471
+--September 16th, 2015
 module HW0 where
 import Data.Char
 data Date = Date Int Int Int deriving Show
@@ -67,15 +70,23 @@ instance Show Month where
 data NewDate = NewDate Month Int Int deriving Show
 christmas = NewDate Dec 25 2015
 
+--This one for whatever reason I struggled with, but it works in the end so no biggie.
 --1E)
---goodnewdate :: NewDate -> Maybe NewDate
---goodnewdate (NewDate((Month) d y))= if 1 <= (Month) && (Month) <= 12 && 1 <= d && d <= 31 && y >= 0
---			then
---				Just (NewDate((Month) d y))
---			else
---
---				Nothing
+--monthnumber :: String -> Int
+--monthnumber x
+--	| x == Jan = 1
+--	| x == Feb = 2
+--	| otherwise = Dec
+	
+goodnewdate :: NewDate -> Maybe NewDate
+goodnewdate (NewDate m d y) = if 1 <= d && d <= 31 && y >= 0
+			then
+				Just (NewDate m d y)
+			else
 
+				Nothing
+
+--With the Char.data library it was fairly simple. Dr. Harrison said it was acceptable to use.
 --2)
 nextlet :: Char -> Char
 nextlet x = if isDigit(x)
@@ -84,6 +95,7 @@ nextlet x = if isDigit(x)
 		else
 			succ x
 
+--with the Char.Data libray it was fairly simple. Dr. Harrison said it was acceptable to use.
 --3)
 digitval :: Char -> Int
 digitval x = if isDigit(x)
@@ -92,9 +104,24 @@ digitval x = if isDigit(x)
 		else
 			-1
 
+--composing was not that bad, seemed pretty straightforward
 --4)
 twine :: (a -> b) -> (a -> c) -> a -> (b, c)
-twine a b (a = (a(b), a(c))
+twine a b c = ((a c), (b c))
 
+--i feel i used too many bools here but it works out
 --5)
-cond :: 
+cond :: Bool -> Bool -> Bool -> Bool
+cond p x y = if p == True
+		then
+			p == x
+		else
+			p == y
+
+--i use guards here to recognize the pattern. I have to use the identiy function because if i don't then it goes 1 too many times
+--6)
+runAgain :: Int -> (a -> a) -> (a -> a)
+runAgain n f
+	| n <= 0 = id
+	| n == 1 = f
+	| otherwise = (runAgain (n-1) f). f
