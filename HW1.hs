@@ -58,12 +58,17 @@ spot = Neck2 Blue
 				(Neck2 Ochre Head Head)))
 		(Neck1 Blue	(Neck2 Ochre Head Head)))
 
+--replace undefined with the right answer
 heads :: Hydra -> Int
-head Hydra = 
+heads Head 				= 1
+heads (Neck1 Color Hydra) 		= undefined
+heads (Neck2 Color Hydra1 Hydra2) 	= Hydra1 + Hydra2
 
 --5)
 apocephalate :: Hydra -> Hydra
-apocephalate f = 
+apocephalate Head 			= undefined --2 grow back
+apocephalate (Neck1 Color Hydra) 	= undefined --
+apocephalate (Neck2 Color Hydra1 Hydra2)= undefined --
 
 --6)
 data Snake = Segment Color Snake | Tail
