@@ -1,3 +1,5 @@
+import Data.List
+
 data Color = Blue | Green | Red | Ochre | Winedark
 	deriving(Eq, Enum, Show)
 
@@ -28,20 +30,28 @@ notPerm c = case c of
 --1) Dr. Harrison went over this in class, yay for me!
 --something about having a length 5
 isPerm :: (Color -> Color) -> Bool
-isPerm f = 
+isPerm f = length (nub (map f [Blue ..])) == length [Blue ..]
 
 --2) a one liner using something to do with map
 pId :: Color -> Color
 pId = id
-isId :: (Color -> Color) -> Bool
-isId f = 
 
+isEqualColor :: (Color, Color) -> Bool
+isEqualColor (x, y) = x == y
+
+isId :: (Color -> Color) -> Bool
+isId f = foldl (\y z -> y && z) True $ map (\(x, y) -> x == y) $ zip [Blue ..] $ map f [Blue ..]
 --3)
 runAgain :: Int -> (a -> a) -> (a -> a)
 runAgain n f = if n <= 0 then id else f . (runAgain (n - 1) f)
 
 order :: (Color -> Color) -> Maybe Int
-order f = 
+order f = if not $ isPerm f then Nothing else Just $ counterz f Blue 1
+	where
+		counterz :: (Color -> Color) -> Color -> Int -> Int
+		counterz f c num = if (runAgain num f) c == c
+				then num
+				else counterz f c (num + 1)
 
 --4)
 data Hydra = Head | Neck1 Color Hydra | Neck2 Color Hydra Hydra
@@ -60,27 +70,31 @@ spot = Neck2 Blue
 
 --replace undefined with the right answer
 heads :: Hydra -> Int
-heads Head 				= 1
-heads (Neck1 Color Hydra) 		= undefined
-heads (Neck2 Color Hydra1 Hydra2) 	= Hydra1 + Hydra2
+heads Head 			= 1
+heads (Neck1 _ hydra) 		= heads hydra
+heads (Neck2 _ hydra1 hydra2) 	= (heads hydra1) + (heads hydra2)
 
 --5)
 apocephalate :: Hydra -> Hydra
-apocephalate Head 			= undefined --2 grow back
-apocephalate (Neck1 Color Hydra) 	= undefined --
-apocephalate (Neck2 Color Hydra1 Hydra2)= undefined --
+apocephalate Head 			 	= Neck2 Blue Head Head
+apocephalate (Neck1 color hydra) 		= Neck1 color (apocephalate hydra)
+apocephalate (Neck2 color hydra1 hydra2)	= Neck2 color (apocephalate hydra1) (apocephalate hydra2)
 
 --6)
 data Snake = Segment Color Snake | Tail
 	deriving(Eq, Show)
 
 toSnake :: Hydra -> Maybe Snake
-toSnake Hydra = 
-
+toSnake Head			= 	Just (Tail)
+toSnake (Neck1 color hydra)	=
+	case toSnake hydra of
+		Just snake 	-> 	Just (Segment color snake)
+		Nothing		->	Nothing
+toSnake (Neck2 _ _ _)		=	Nothing
 --7)
-toList :: Snake -> [Color]
-toList Snake = 
+--toList :: Snake -> [Color]
+--toList Snake(Segment color snake) = unfoldr(Segment color snake)
 
 --8)
-uroborize :: Snake -> Snake
-uroborize Snake = 
+--uroborize :: Snake -> Snake
+--uroborize Snake = 
