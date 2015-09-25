@@ -86,15 +86,27 @@ data Snake = Segment Color Snake | Tail
 
 toSnake :: Hydra -> Maybe Snake
 toSnake Head			= 	Just (Tail)
-toSnake (Neck1 color hydra)	=
+toSnake (Neck1 color hydra)	=	
 	case toSnake hydra of
 		Just snake 	-> 	Just (Segment color snake)
 		Nothing		->	Nothing
 toSnake (Neck2 _ _ _)		=	Nothing
---7)
---toList :: Snake -> [Color]
---toList Snake(Segment color snake) = unfoldr(Segment color snake)
 
+
+--Helper function for toSnake
+--snakeAcc :: Snake -> Hydra -> Maybe Snake
+--snakeAcc s (Neck1 c h) 				= 
+--	where	s' 				= snakeAcc (Segment c s) h
+--		snakeAcc s h			= Just s
+--		snakeAcc s (Neck2 _ _ _) 	= Nothing
+
+
+
+--7)
+toList :: Snake -> [Color]
+toList (Segment color snake) 			= [color] ++ toList(snake)
+toList Tail 					= []
 --8)
 --uroborize :: Snake -> Snake
 --uroborize Snake = 
+--------
