@@ -1,3 +1,5 @@
+--Charles Voege
+--14098471
 import Data.List
 
 data Color = Blue | Green | Red | Ochre | Winedark
@@ -39,8 +41,10 @@ pId = id
 isEqualColor :: (Color, Color) -> Bool
 isEqualColor (x, y) = x == y
 
+--yay for anonymous function calling and figuring out that $ acts like parenthesis!
 isId :: (Color -> Color) -> Bool
 isId f = foldl (\y z -> y && z) True $ map (\(x, y) -> x == y) $ zip [Blue ..] $ map f [Blue ..]
+
 --3)
 runAgain :: Int -> (a -> a) -> (a -> a)
 runAgain n f = if n <= 0 then id else f . (runAgain (n - 1) f)
@@ -68,7 +72,7 @@ spot = Neck2 Blue
 				(Neck2 Ochre Head Head)))
 		(Neck1 Blue	(Neck2 Ochre Head Head)))
 
---replace undefined with the right answer
+--replace undefined on right side of equals sign with the right answer
 heads :: Hydra -> Int
 heads Head 			= 1
 heads (Neck1 _ hydra) 		= heads hydra
@@ -86,27 +90,38 @@ data Snake = Segment Color Snake | Tail
 
 toSnake :: Hydra -> Maybe Snake
 toSnake Head			= 	Just (Tail)
-toSnake (Neck1 color hydra)	=	
-	case toSnake hydra of
-		Just snake 	-> 	Just (Segment color snake)
-		Nothing		->	Nothing
+toSnake (Neck1 color hydra)	=	snakeAcc (Segment color Tail) hydra
+--replace below case statement with helper function, will be easier according to Harrison
+--		case toSnake hydra of
+--		Just snake 	-> 	Just (Segment color snake)
+--		Nothing		->	Nothing
 toSnake (Neck2 _ _ _)		=	Nothing
 
 
 --Helper function for toSnake
---snakeAcc :: Snake -> Hydra -> Maybe Snake
---snakeAcc s (Neck1 c h) 				= 
---	where	s' 				= snakeAcc (Segment c s) h
---		snakeAcc s h			= Just s
---		snakeAcc s (Neck2 _ _ _) 	= Nothing
-
-
+snakeAcc :: Snake -> Hydra -> Maybe Snake
+snakeAcc s Head					= Just s
+snakeAcc s (Neck1 c h) 				= Just s' 
+	where	
+		s' 				= Segment c s
+		snakeAcc s h			= Just s
+		--snakeAcc s (Neck2 _ _ _) 	= Nothing
+snakeAcc s (Neck2 _ _ _)			= Nothing
 
 --7)
 toList :: Snake -> [Color]
 toList (Segment color snake) 			= [color] ++ toList(snake)
 toList Tail 					= []
+
+--Hints Harrison said to do, uroborize snake = snake <some helper function> snake
 --8)
---uroborize :: Snake -> Snake
---uroborize Snake = 
---------
+uroborize :: Snake -> Snake
+uroborize Tail		 		= Tail
+--for some reason this errors out, if we have time, fix it, if not, oh well.
+--uroborize (Segment c s) 		= Segment c (uroborize s) 
+uroborize snake				= snake +++ uroborize snake
+
+--Helper function Harrison said to fix up during office hours Friday
+(+++) :: Snake -> Snake -> Snake
+Tail +++ s = s
+(Segment c s1) +++ s2 = Segment c (s1 +++ s2)
